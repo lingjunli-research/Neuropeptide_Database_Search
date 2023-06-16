@@ -26,13 +26,13 @@ from pyopenms import *
 start = time.time()
 
 ##User input##
-output_parent_directory = r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_output" #folder in which all output directories will be generated
-db_path = r"C:\Users\lawashburn\Documents\DBpep_v2\finale\Reference_DB\target_df_full.csv" #database fasta path
-base_file_path = r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_input"
+output_parent_directory = r"C:\Users\lawashburn\Documents\DBpep_v2\Validation_w_Kellen_Motif_Nhu_Raw_Files\PEAKS_oursoftware_compare_brain_only\DB_search_optimize\01_baseline" #folder in which all output directories will be generated
+db_path = r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_input\target_decoy_df_full_validated.csv" #database fasta path
+base_file_path = r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files"
 
 use_predefined_db = True
 
-precursor_error_cutoff = 50 #ppm
+precursor_error_cutoff = 20 #ppm
 fragment_error_cutoff = 0.02 #Da
 precursor_charges = [2,3,4,5,6,7,8]
 fragment_charges = [1,2,3,4]
@@ -41,7 +41,7 @@ bin_size = 5
 number_of_steps = 7
 min_seq_coverage = 25
 normalization=50
-subsequent_matching_rounds = 5
+subsequent_matching_rounds = 10
 spectra_segments = 50
 
 amidation = True
@@ -49,46 +49,54 @@ oxidation_M_status = True
 pyroglu_E_status = True
 pyroglu_Q_status = True
 sulfo_Y_status = True
-max_modifications = 2
+max_modifications = 3
 
-filter_high_int_mz = False
+# raw_conv_mzml_storage = [[r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_Brain_1.mzML",
+#                           r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_Brain_1_formatted.txt"],
+#                          [r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_Brain_2.mzML",
+#                           r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_Brain_2_formatted.txt"],
+#                          [r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_Brain_3.mzML",
+#                           r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_Brain_3_formatted.txt"],
+#                          [r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_CoG_1.mzML",
+#                           r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_CoG_1_formatted.txt"],
+#                          [r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_CoG_2.mzML",
+#                           r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_CoG_2_formatted.txt"],
+#                          [r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_CoG_3.mzML",
+#                           r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_CoG_3_formatted.txt"],
+#                          [r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_PO_1.mzML",
+#                           r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_PO_1_formatted.txt"],
+#                          [r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_PO_2.mzML",
+#                          r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_PO_2_formatted.txt"],
+#                         [r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_PO_3.mzML",
+#                          r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_PO_3_formatted.txt"],
+#                         [r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_SG_1.mzML",
+#                          r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_SG_1_formatted.txt"],
+#                         [r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_SG_2.mzML",
+#                          r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_SG_2_formatted.txt"],
+#                         [r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_SG_3.mzML",
+#                          r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_SG_3_formatted.txt"],
+#                         [r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_TG_1.mzML",
+#                          r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_TG_1_formatted.txt"],
+#                         [r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_TG_2.mzML",
+#                          r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_TG_2_formatted.txt"],
+#                         [r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_TG_3.mzML",
+#                          r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_TG_3_formatted.txt"]]
 
-
-raw_conv_mzml_storage = [
-    [r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_input\20180507_Brain_DDA_top10_TR2.mzML",
-     r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_input\20180507_Brain_DDA_top10_TR2.txt"],
-    [r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_input\20180507_Brain_DDA_top20_TR1.mzML",
-    r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_input\20180507_Brain_DDA_top20_TR1.txt"],
-    [r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_input\20180507_Brain_DDA_top20_TR2.mzML",
-    r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_input\20180507_Brain_DDA_top20_TR2.txt"],
-    [r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_input\20180524_PO_DDA_top10_TR1_180525095121.mzML",
-    r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_input\20180524_PO_DDA_top10_TR1_180525095121.txt"],
-    [r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_input\20180524_PO_DDA_top10_TR2.mzML",
-    r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_input\20180524_PO_DDA_top10_TR2.txt"],
-    [r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_input\20180524_PO_DDA_top20_TR1.mzML",
-    r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_input\20180524_PO_DDA_top20_TR1.txt"],
-    [r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_input\20180524_PO_DDA_top20_TR3.mzML",
-    r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_input\20180524_PO_DDA_top20_TR3.txt"],
-    [r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_input\20190326_SG_Unlabeled_DDA_TR1.mzML",
-    r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_input\20190326_SG_Unlabeled_DDA_TR1.txt"],
-    [r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_input\20190326_SG_Unlabeled_DDA_TR2.mzML",
-    r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_input\20190326_SG_Unlabeled_DDA_TR2.txt"],
-    [r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_input\20190326_SG_Unlabeled_DDA_TR3.mzML",
-    r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_input\20190326_SG_Unlabeled_DDA_TR3.txt"],
-    [r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_input\20190701_CoG_Unlabeled_DDA_TR1.mzML",
-    r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_input\20190701_CoG_Unlabeled_DDA_TR1.txt"],
-    [r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_input\20190701_CoG_Unlabeled_DDA_TR2.mzML",
-    r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_input\20190701_CoG_Unlabeled_DDA_TR2.txt"]]
-
-
-# raw_conv_mzml_storage = [[r"C:\Users\lawashburn\Documents\DBpep_v2\finale\Reference_DB\perfect_spectra.txt",
-#                             r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_input\20180507_Brain_DDA_top20_TR1.mzML"]]
+raw_conv_mzml_storage = [[r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_Brain_1.mzML",
+                          r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_Brain_1_formatted.txt"],
+                         [r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_Brain_2.mzML",
+                          r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_Brain_2_formatted.txt"],
+                         [r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_Brain_3.mzML",
+                          r"C:\Users\lawashburn\Documents\DBpep_v2\validation\Nhu_RAW_files\2021_0817_Brain_3_formatted.txt"]]
 
 for file_category in raw_conv_mzml_storage:
     
     raw_converter_path = file_category[1]
     print(raw_converter_path)
     mzml_path_input = file_category[0]
+    
+    e = MSExperiment()
+    MzMLFile().load(mzml_path_input, e)
 
     ##Definition storage
     
@@ -393,7 +401,7 @@ for file_category in raw_conv_mzml_storage:
             f.writelines('\n'.join(param_file_entries))
     
     def db_seq_mass_compile(fasta_to_df):
-    
+   
         final_seq_list = []
         
         complete_db = pd.DataFrame()
@@ -670,8 +678,7 @@ for file_category in raw_conv_mzml_storage:
     
     
     def fragment_amm(secondary_amm_prep_clean,peptide,ion_report,peptide_report_output,exp_precursor):
-        
-        
+       
         sequence_coverage_rep_final = pd.DataFrame()
         
         filtered_secondary_amm = secondary_amm_prep_clean[secondary_amm_prep_clean['Sequence'] == peptide] #filter amm from before for the sequence we are looking at 
@@ -703,14 +710,16 @@ for file_category in raw_conv_mzml_storage:
             merge_fragment_match_filtered = merge_fragment_match_filtered[merge_fragment_match_filtered['Fragment error (Da)'] <= fragment_error_cutoff]
             
             if len(merge_fragment_match_filtered)>0: #only export fragment report if fragments are found
-                
+                ##
                 issue_seq1 = 'Q(Gln->pyro-Glu)'
+                issue_seq2 = 'E(Glu->pyro-Glu)'
                 peptide_formal = peptide
                 
                 if issue_seq1 in peptide_formal:
-                    print(peptide_formal)
                     peptide_formal = peptide_formal.replace(issue_seq1,'Q(pyroGlu)')
-            
+                elif issue_seq2 in peptide_formal:
+                    peptide_formal = peptide_formal.replace(issue_seq2,'E(pyroGlu)')
+
                 output_path_rep = peptide_rep_output_folder + '\\' + peptide_formal + '_' + str(scan_to_report) + '_fragment_report.csv'
         
                 with open(output_path_rep,'w',newline='') as filec:
@@ -727,7 +736,6 @@ for file_category in raw_conv_mzml_storage:
             
             ###theoretical spectra for XCorr
     def xcorr_calc(ss,peptide):        
-        print('starting correlation calcs')
         ss = int(ss)
         tsg = TheoreticalSpectrumGenerator()
         thspec = MSSpectrum()
@@ -740,8 +748,7 @@ for file_category in raw_conv_mzml_storage:
         #for ion, peak in zip(thspec.getStringDataArrays()[0], thspec):
         #    print(ion, peak.getMZ())
     
-        e = MSExperiment()
-        MzMLFile().load(mzml_path_input, e)
+        
         spectrum_of_interest = e[ss-1]
         print("Spectrum native id", spectrum_of_interest.getNativeID())
         mz, i = spectrum_of_interest.get_peaks()
@@ -756,6 +763,7 @@ for file_category in raw_conv_mzml_storage:
             fragment_mass_tolerance, is_tol_in_ppm, spectrum_of_interest, thspec)
     
         return result
+
     
     def perform_db_search(fasta_w_mass,exp_precursor,peptide_report_output):
         no_ban_seq = []
@@ -777,8 +785,8 @@ for file_category in raw_conv_mzml_storage:
             fragment_amm_res = fragment_amm(precursor_amm_results,peptide,ion_report,peptide_report_output,exp_precursor)
             scan = (fragment_amm_res['Scan'].values.tolist())
             for ss in scan:
-                xcorr_res = xcorr_calc(ss,peptide)
-                fragment_amm_res['Correlation value'] = xcorr_res
+            #     xcorr_res = xcorr_calc(ss,peptide)
+            #     fragment_amm_res['Correlation value'] = xcorr_res
                 results_table = pd.concat([results_table,fragment_amm_res])
         number_IDs = results_table['Sequence'].values.tolist()
         number_IDs = list(set(number_IDs))
@@ -942,5 +950,35 @@ for file_category in raw_conv_mzml_storage:
     with open(file_path,'w',newline='') as filec:
             writerc = csv.writer(filec)
             rounds_report.to_csv(filec,index=False)
+    
+    final_report_path = peptide_report_output + '\\final_psm_report'+str(subsequent_matching_rounds)+'.csv'
+    final_report_read = pd.read_csv(final_report_path)
+    
+    ss_storage_score = []
+    peptide_storage_score = []
+    seq_cov_storage_score = []
+    corr_score_storage_score = []
+    
+    for ind in final_report_read.index:
+        ss = final_report_read['Scan'][ind]
+        peptide = final_report_read['Sequence'][ind]
+        seq_cov = final_report_read['Sequence coverage'][ind]
+        corr_score = xcorr_calc(ss,peptide)
+        
+        ss_storage_score.append(ss)
+        peptide_storage_score.append(peptide)
+        seq_cov_storage_score.append(seq_cov)
+        corr_score_storage_score.append(corr_score)
+    
+    results_w_correlation = pd.DataFrame()
+    results_w_correlation['Sequence'] = peptide_storage_score
+    results_w_correlation['Scan'] = ss_storage_score
+    results_w_correlation['Sequence coverage'] = seq_cov_storage_score
+    results_w_correlation['Correlation score'] = corr_score_storage_score
+    
+    file_path = peptide_report_output + '\\results_with_correlation.csv'
+    with open(file_path,'w',newline='') as filec:
+            writerc = csv.writer(filec)
+            results_w_correlation.to_csv(filec,index=False)
 
     param_log_export(peptide_report_output,sample_name)

@@ -25,9 +25,9 @@ import numpy as np
 start = time.time()
 
 ##User input##
-output_parent_directory = r"C:\Users\lawashburn\Documents\DBpep_v2\finale\Correlation_Opt\v14_double_AMM_test" #folder in which all output directories will be generated
+output_parent_directory = r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_output" #folder in which all output directories will be generated
 db_path = r"C:\Users\lawashburn\Documents\DBpep_v2\finale\Reference_DB\target_df_full.csv" #database fasta path
-base_file_path = r"C:\Users\lawashburn\Documents\DBpep_v2\finale\Reference_DB"
+base_file_path = r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_input"
 
 precursor_error_cutoff = 50 #ppm
 fragment_error_cutoff = 0.02 #Da
@@ -67,7 +67,7 @@ filter_high_int_mz = False
 #                             r"C:/Users/lawashburn/Documents/DBpep_v2/XCorr_Opt/XCorr_validation/20230207/KD_Training_Spectra/MS2_formatted/SG_Unlabeled_DDA_TR2_formatted.txt",
 #                             r"C:/Users/lawashburn/Documents/DBpep_v2/XCorr_Opt/XCorr_validation/20230207/KD_Training_Spectra/MS2_formatted/SG_Unlabeled_DDA_TR3_formatted.txt"]
 
-raw_converter_path_input = [r"C:\Users\lawashburn\Documents\DBpep_v2\finale\Reference_DB\perfect_spectra.txt"]
+raw_converter_path_input = [r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_input\20180507_Brain_DDA_top10_TR2.txt"]
 
 
 high_intensity_mz = [110.0717,120.0811,129.1025,136.0758,156.0769,157.1337,298.1035,407.1847,504.2565]
@@ -544,77 +544,6 @@ def raw_file_data_extraction(raw_file_path):
     print('yes')
     return exp_precursor
 
-# def precursor_amm(db,exp_precursor):
-#     #precursor_temp_cutoff = precursor_error_cutoff #rough estimate of ppm to Da to minimize extra search space
-    
-#     if len(db)<1: #throws an error if database file is empty
-#         raise ValueError('Database file is empty')
-    
-#     db_sorted = db.sort_values(by = 'Precursor theoretical monoisotopic mass')
-#     exp_precursor_sorted = exp_precursor.sort_values(by = 'Precursor actual monoisotopic mass')
-    
-#     scan_numbers = len(set(exp_precursor_sorted['Scan'].values.tolist()))
-#     scans_check = set(exp_precursor_sorted['Scan'].values.tolist())
-    
-#     segement_size = int(scan_numbers/spectra_segments)
-    
-#     merge_match = pd.DataFrame()
-    
-#     scans_accounted = []
-#     for width in range(1,spectra_segments):
-#         start_index = (width-1)*segement_size
-#         end_index = width*segement_size
-        
-#         scans_to_include = []
-#         for xxx in range(start_index,end_index):
-#             scans_to_include.append(xxx)
-#             scans_accounted.append(xxx)
-
-#         exp_precursor_segment = exp_precursor_sorted[exp_precursor_sorted['Scan'].isin(scans_to_include)]
-    
-#         merge_match2 = pd.merge_asof(exp_precursor_segment,db_sorted, left_on='Precursor actual monoisotopic mass', 
-#                                     right_on='Precursor theoretical monoisotopic mass',
-#                                     tolerance = precursor_error_cutoff, allow_exact_matches=True,direction='forward') 
-#         merge_match3 = pd.merge_asof(exp_precursor_segment,db_sorted, left_on='Precursor actual monoisotopic mass', 
-#                                     right_on='Precursor theoretical monoisotopic mass',
-#                                     tolerance = precursor_error_cutoff, allow_exact_matches=True,direction='backward') 
-        
-#         merge_match = pd.concat([merge_match, merge_match2, merge_match3])
-    
-#     scans_missing_check = []
-    
-#     for xxxx in scans_check:
-#         if xxxx not in scans_accounted:
-#             scans_missing_check.append(xxxx)
-#         else:
-#             pass
-    
-#     if len(scans_missing_check)>0:
-#         exp_precursor_segment = exp_precursor_sorted[exp_precursor_sorted['Scan'].isin(scans_missing_check)]
-
-#         merge_match2 = pd.merge_asof(exp_precursor_segment,db_sorted, left_on='Precursor actual monoisotopic mass', 
-#                                     right_on='Precursor theoretical monoisotopic mass',
-#                                     tolerance = precursor_error_cutoff, allow_exact_matches=True,direction='forward') 
-#         merge_match3 = pd.merge_asof(exp_precursor_segment,db_sorted, left_on='Precursor actual monoisotopic mass', 
-#                                     right_on='Precursor theoretical monoisotopic mass',
-#                                     tolerance = precursor_error_cutoff, allow_exact_matches=True,direction='backward') 
-        
-#         merge_match = pd.concat([merge_match, merge_match2, merge_match3])
-#     else:
-#         pass
-    
-#     merge_match= merge_match.drop_duplicates()
-
-#     merge_match_filtered = merge_match.dropna(subset=['Sequence','Precursor theoretical monoisotopic mass'])
-#     merge_match_filtered = merge_match_filtered.copy() #silences pesky warning
-#     merge_match_filtered['Precursor error (ppm)'] = ((abs((merge_match_filtered['Precursor theoretical monoisotopic mass'])-
-#                                                           (merge_match_filtered['Precursor actual monoisotopic mass'])))/
-#                                                       (merge_match_filtered['Precursor theoretical monoisotopic mass'])) * 1E6
-
-#     precursor_amm_results = merge_match_filtered[merge_match_filtered['Precursor error (ppm)'] <= precursor_error_cutoff]
-
-
-#     return precursor_amm_results
 
 def precursor_amm(db,exp_precursor):
     precursor_temp_cutoff = precursor_error_cutoff*3 #rough estimate of ppm to Da to minimize extra search space
@@ -685,6 +614,10 @@ def precursor_amm(db,exp_precursor):
 
     precursor_amm_results = merge_match_filtered[merge_match_filtered['Precursor error (ppm)'] <= precursor_error_cutoff]
 
+    file_path = peptide_report_output + '\\precursor_amm_results.csv'
+    with open(file_path,'w',newline='') as filec:
+            writerc = csv.writer(filec)
+            precursor_amm_results.to_csv(filec,index=False)   
 
     return precursor_amm_results
 
@@ -736,9 +669,9 @@ def fragment_amm(secondary_amm_prep_clean,peptide,ion_report,peptide_report_outp
             scans_present.append(z)
     for scan_to_report in scans_present:
         
-        peptide_rep_output_folder = peptide_report_output+'\\fragment_matches'
-        if not os.path.exists(peptide_rep_output_folder):
-            os.makedirs(peptide_rep_output_folder)
+        # peptide_rep_output_folder = peptide_report_output+'\\fragment_matches'
+        # if not os.path.exists(peptide_rep_output_folder):
+        #     os.makedirs(peptide_rep_output_folder)
         
         scans_filtered_secondary_amm = filtered_secondary_amm[filtered_secondary_amm['Scan'] == scan_to_report] #filter to look at just one scan
         scans_filtered_secondary_amm = scans_filtered_secondary_amm.sort_values(by='Fragment actual monoisotopic mass')
@@ -752,15 +685,15 @@ def fragment_amm(secondary_amm_prep_clean,peptide,ion_report,peptide_report_outp
 
         merge_fragment_match_filtered = merge_fragment_match_filtered[merge_fragment_match_filtered['Fragment error (Da)'] <= fragment_error_cutoff]
         
-        if len(merge_fragment_match_filtered)>0: #only export fragment report if fragments are found
+        # if len(merge_fragment_match_filtered)>0: #only export fragment report if fragments are found
         
-            output_path_rep = peptide_rep_output_folder + '\\' + peptide + '_' + str(scan_to_report) + '_fragment_report.csv'
+        #     output_path_rep = peptide_rep_output_folder + '\\' + peptide + '_' + str(scan_to_report) + '_fragment_report.csv'
     
-            with open(output_path_rep,'w',newline='') as filec:
-                    writerc = csv.writer(filec)
-                    merge_fragment_match_filtered.to_csv(filec,index=False) 
-        else:
-            pass
+        #     with open(output_path_rep,'w',newline='') as filec:
+        #             writerc = csv.writer(filec)
+        #             merge_fragment_match_filtered.to_csv(filec,index=False) 
+        # else:
+        #     pass
         seq_coverage = seq_coverage_calc(merge_fragment_match_filtered,ion_report,scan_to_report,peptide)
         sequence_coverage_rep_final = pd.concat([sequence_coverage_rep_final,seq_coverage])
     return sequence_coverage_rep_final
@@ -771,9 +704,9 @@ def fragment_amm(secondary_amm_prep_clean,peptide,ion_report,peptide_report_outp
         ###theoretical spectra for XCorr
 def xcorr_calc(ion_report,exp_precursor,scan_to_report,peptide_report_output,peptide):        
     
-    xcorr_rep_output_folder = peptide_report_output+'\\xcorr_data'
-    if not os.path.exists(xcorr_rep_output_folder):
-        os.makedirs(xcorr_rep_output_folder)
+    # xcorr_rep_output_folder = peptide_report_output+'\\xcorr_data'
+    # if not os.path.exists(xcorr_rep_output_folder):
+    #     os.makedirs(xcorr_rep_output_folder)
     
     actual_peak_intensities = exp_precursor[exp_precursor['Scan'] == scan_to_report]
     theoretical_mass_list_z1 = ion_report['Fragment theoretical monoisotopic mass'].values.tolist()        
@@ -811,10 +744,10 @@ def xcorr_calc(ion_report,exp_precursor,scan_to_report,peptide_report_output,pep
     theoretical_spectra_w_flanks['theoretical m/z'] = theoretical_spectra_w_flanks['theoretical m/z'].round(4)
     theoretical_spectra_w_flanks['theoretical intensity'] = theo_mass_list_intensity
 
-    output_path_rep = xcorr_rep_output_folder + '\\' + peptide + '_' + str(scan_to_report) + '_theo_rep.csv'
-    with open(output_path_rep,'w',newline='') as filec:
-            writerc = csv.writer(filec)
-            theoretical_spectra_w_flanks.to_csv(filec,index=False) 
+    # output_path_rep = xcorr_rep_output_folder + '\\' + peptide + '_' + str(scan_to_report) + '_theo_rep.csv'
+    # with open(output_path_rep,'w',newline='') as filec:
+    #         writerc = csv.writer(filec)
+    #         theoretical_spectra_w_flanks.to_csv(filec,index=False) 
     
     experimental_spectra = pd.DataFrame()
     experimental_spectra['experimental m/z'] = actual_peak_intensities['Fragment actual m/z']
@@ -844,10 +777,10 @@ def xcorr_calc(ion_report,exp_precursor,scan_to_report,peptide_report_output,pep
     
     filtered_experimental['experimental intensity'] = 50
     
-    output_path_rep = xcorr_rep_output_folder + '\\' + peptide + '_' + str(scan_to_report) + '_exp_rep.csv'
-    with open(output_path_rep,'w',newline='') as filec:
-            writerc = csv.writer(filec)
-            filtered_experimental.to_csv(filec,index=False) 
+    # output_path_rep = xcorr_rep_output_folder + '\\' + peptide + '_' + str(scan_to_report) + '_exp_rep.csv'
+    # with open(output_path_rep,'w',newline='') as filec:
+    #         writerc = csv.writer(filec)
+    #         filtered_experimental.to_csv(filec,index=False) 
     
     range_eval = []    
     range_eval.append(float(theoretical_spectra_w_flanks['theoretical m/z'].min()))
@@ -881,6 +814,12 @@ def xcorr_calc(ion_report,exp_precursor,scan_to_report,peptide_report_output,pep
                                             right_on='theoretical m/z', tolerance=bin_tolerance,allow_exact_matches=True, direction='nearest')
     
     xcorr_array = xcorr_array.replace(np.nan, 0)
+    
+    # output_path_rep = xcorr_rep_output_folder + '\\' + peptide + '_' + str(scan_to_report) + '_xcorr_array.csv'
+    # with open(output_path_rep,'w',newline='') as filec:
+    #         writerc = csv.writer(filec)
+    #         xcorr_array.to_csv(filec,index=False) 
+    
 
     theoretical_array = xcorr_array['experimental intensity'].values.tolist()
     experimental_array = xcorr_array['theoretical intensity'].values.tolist()
@@ -920,6 +859,8 @@ def perform_db_search(fasta_w_mass,exp_precursor,peptide_report_output):
     with open(file_path,'w',newline='') as filec:
             writerc = csv.writer(filec)
             results_table.to_csv(filec,index=False)    
+
+
     
     results_table = results_table.drop_duplicates()
     results_table['Scan count'] = results_table['Scan'].map(results_table.groupby('Scan')['Scan'].count())
@@ -934,6 +875,7 @@ def perform_db_search(fasta_w_mass,exp_precursor,peptide_report_output):
             ###filter 1, keep only max coverage
             max_coverage_scan = scan_zoom_in['Sequence coverage'].max()
             scan_filter1 = scan_zoom_in[scan_zoom_in['Sequence coverage'] == max_coverage_scan]
+            finalized_psms = pd.concat([finalized_psms,scan_filter1])
             if len(scan_filter1) == 1:
                 finalized_psms = pd.concat([finalized_psms,scan_filter1])
             if len(scan_filter1) > 1:
@@ -1024,9 +966,8 @@ for raw_converter_path in raw_converter_path_input:
             finalized_psms.to_csv(filec,index=False)
     unique_IDS = len(set(finalized_psms['Sequence'].values.tolist()))
     unique_IDS_number.append(unique_IDS)
-    rounds = 3
-    
-    for a in range(0,rounds):
+   
+    for a in range(0,subsequent_matching_rounds):
         rounds_number.append(a+2)
         all_final_IDs = finalized_psms['Sequence'].values.tolist()
         fasta_w_mass_filtered = fasta_w_mass[~fasta_w_mass['Sequence'].isin(all_final_IDs)]

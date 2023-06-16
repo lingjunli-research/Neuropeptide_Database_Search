@@ -10,8 +10,8 @@ import re
 import csv
 from statistics import mean
 
-results_directory = r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_input_data\database_search_output_wo_hyperscore"
-output_directory = r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_metric_extraction"
+results_directory = r"C:\Users\lawashburn\Documents\DBpep_v2\Validation_w_Kellen_Motif_Nhu_Raw_Files\NV_output_DB_search_results"
+output_directory = r"C:\Users\lawashburn\Documents\DBpep_v2\Validation_w_Kellen_Motif_Nhu_Raw_Files\weighting_metric_extraction_motif_full"
 
 def get_dir_names_with_strings_list(str_list): #definition for finding a file containing a string in filename in specified directory
     full_list = os.listdir(results_directory)
@@ -51,46 +51,81 @@ percent_y_ions_storage = []
 avg_ions_per_AA_storage = []
 num_non_neut_ions_storage = []
 hyperscore_storage = []
+e_pyroglu = []
+q_pyroglu = []
+max_fragment_err_storage = []
+min_fragment_err_storage = []
+med_fragment_err_storage = []
+ox_storage = []
+sulfo_storage = []
+num_mods_storage = []
 
 for a in parent_dir_list:
 
     a_path = results_directory + '\\' + a
     csv_list = (get_file_names_with_strings_list(['.csv'],a_path)) #search for the file based on query
 
-    final_results_file_path = results_directory + '\\' + a + '\\final_psm_report5.csv'
+    final_results_file_path = results_directory + '\\' + a + '\\motif_score_1_NFDEID.csv'
     final_results = pd.read_csv(final_results_file_path)
     final_results = final_results[final_results['Sequence coverage'] > 0]
     
     for ind in final_results.index:
         sequence = final_results['Sequence'][ind]
         scan = final_results['Scan'][ind]
-        seq_cov = final_results['Sequence coverage'][ind]
+        motif_score = final_results['Motif Score'][ind]
+        corr_score = final_results['Correlation score'][ind]
         
         peptide_storage.append(sequence)
         scan_storage.append(scan)
-        percent_seq_cov_storage.append(seq_cov)
+        motif_score_storage.append(motif_score)
         sample_storage.append(a)
+        hyperscore_storage.append(corr_score)
+        
+        num_mods = sequence.count('(')
+        num_mods_storage.append(num_mods)
         
         if '(Amidated)' in sequence:
             c_term_amid_storage.append(1)
         else:
             c_term_amid_storage.append(0)
+            
+        if '(Oxidation)' in sequence:
+            ox_storage.append(1)
+        else:
+            ox_storage.append(0)
+            
+        if '(Sulfo)' in sequence:
+            sulfo_storage.append(1)
+        else:
+            sulfo_storage.append(0)
         
         if 'Q(Gln->pyro-Glu)' in sequence:
+            q_pyroglu.append(1)
+            e_pyroglu.append(0)
             updated_seq = sequence.replace('Q(Gln->pyro-Glu)','Q(pyroGlu)')
             fragment_report_path = results_directory + '\\' + a + '\\fragment_matches\\' + updated_seq + '_' + str(scan) + '_fragment_report.csv'
             
         elif 'E(Glu->pyro-Glu)' in sequence:
+            e_pyroglu.append(1)
+            q_pyroglu.append(0)
             updated_seq = sequence.replace('E(Glu->pyro-Glu)','E(pyroGlu)')
             fragment_report_path = results_directory + '\\' + a + '\\fragment_matches\\' + updated_seq + '_' + str(scan) + '_fragment_report.csv'
         
         else:
             fragment_report_path = results_directory + '\\' + a + '\\fragment_matches\\' + sequence + '_' + str(scan) + '_fragment_report.csv'
+            e_pyroglu.append(0)
+            q_pyroglu.append(0)
         
         fragment_report = pd.read_csv(fragment_report_path)
         fragment_report['Fragment error (Da)'] = fragment_report['Fragment error (Da)'].abs()
         fragment_err_mean = fragment_report['Fragment error (Da)'].mean()
         avg_fragment_err_storage.append(fragment_err_mean)
+        fragment_err_max = fragment_report['Fragment error (Da)'].max()
+        max_fragment_err_storage.append(fragment_err_max)
+        fragment_err_min = fragment_report['Fragment error (Da)'].min()
+        min_fragment_err_storage.append(fragment_err_min)
+        fragment_err_med = fragment_report['Fragment error (Da)'].median()
+        med_fragment_err_storage.append(fragment_err_med)
         
         precursor_err = fragment_report['Precursor error (ppm)'][0]
         precursor_err_storage.append(precursor_err)
@@ -146,14 +181,20 @@ for a in parent_dir_list:
             ion = ion.replace('-NH3','')
             y_ion_loc.append(int(ion))
         
-        consec_b_ion = count_consec(b_ion_loc)
-        consec_b_ions_storage.append(max(consec_b_ion))
-        
-        consec_y_ion = count_consec(y_ion_loc)
-        consec_y_ions_storage.append(max(consec_y_ion))
-        
         peptide_no_mods = re.sub("[\(\[].*?[\)\]]", "", sequence)
         num_expected_ions = len(peptide_no_mods)
+        
+        consec_b_ion = count_consec(b_ion_loc)
+        max_consec_b_ion = max(consec_b_ion)
+        norm_consec_b_ion = max_consec_b_ion / num_expected_ions
+        consec_b_ions_storage.append(norm_consec_b_ion)
+        
+        consec_y_ion = count_consec(y_ion_loc)
+        max_consec_y_ion = max(consec_y_ion)
+        norm_consec_y_ion = max_consec_y_ion / num_expected_ions
+        consec_y_ions_storage.append((norm_consec_y_ion))
+        
+        
         
         y_reorient = []
         
@@ -231,14 +272,23 @@ final_weighting_metrics['Precursor Error'] = precursor_err_storage
 final_weighting_metrics['# Consecutive b-ions'] = consec_b_ions_storage
 final_weighting_metrics['# Consecutive y-ions'] = consec_y_ions_storage
 final_weighting_metrics['C-termini amidation'] = c_term_amid_storage
-final_weighting_metrics['% Sequence coverage'] = percent_seq_cov_storage
+final_weighting_metrics['Motif_Score'] = motif_score_storage
 final_weighting_metrics['Average annotations/fragment '] = avg_annotate_peak_storage
 final_weighting_metrics['% Fragment ions are b'] = percent_b_ions_storage
 final_weighting_metrics['% Fragment ions are y'] = percent_y_ions_storage
 final_weighting_metrics['Average number of fragment ions per AA'] = avg_ions_per_AA_storage
 final_weighting_metrics['Number of non-neutral-loss fragment ions per AA'] = num_non_neut_ions_storage
+final_weighting_metrics['Hyperscore'] = hyperscore_storage
+final_weighting_metrics['Pyro-glu on E'] = e_pyroglu
+final_weighting_metrics['Pyro-glu on Q'] = q_pyroglu
+final_weighting_metrics['Max Fragment Error'] = max_fragment_err_storage
+final_weighting_metrics['Min Fragment Error'] = min_fragment_err_storage
+final_weighting_metrics['Median Fragment Error'] = med_fragment_err_storage
+final_weighting_metrics['Oxidation'] = ox_storage
+final_weighting_metrics['Sulfation'] = sulfo_storage
+final_weighting_metrics['# Modifications'] = num_mods_storage
 
-file_path = output_directory + '\\metrics_out_v2.csv'
+file_path = output_directory + '\\metrics_out_motif_score_1_NFDEID.csv'
 with open(file_path,'w',newline='') as filec:
         writerc = csv.writer(filec)
         final_weighting_metrics.to_csv(filec,index=False)
