@@ -272,15 +272,6 @@ for x in range(0,path_length):
         plt.savefig(fig_out_path)
         plt.close()
         
-        avg_value
-        Background
-        fold_change = avg_vallue/background
-        
-        fold_change_rep = pd.DataFrame()
-        fold_change_rep['Peptide'] = peptide_ID
-        fold_change_rep['Fold Change'] = fold_change
-        
-        fold_change_all_rep = pd.concat([fold_change_all_rep,fold_change_rep])
-    
+
     
         

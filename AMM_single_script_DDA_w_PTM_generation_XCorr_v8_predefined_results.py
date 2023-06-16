@@ -25,8 +25,8 @@ import numpy as np
 start = time.time()
 
 ##User input##
-output_parent_directory = r"C:\Users\lawashburn\Documents\DBpep_v2\finale\Reference_DB" #folder in which all output directories will be generated
-db_path = r"C:\Users\lawashburn\Documents\DBpep_v2\finale\20230414\target_decoy_1iteration_v2\target_decoy_database_iteration1.fasta" #database fasta path
+output_parent_directory = r"C:\Users\lawashburn\Documents\DBpep_v2\finale\Reference_DB\target_decoy_perfect" #folder in which all output directories will be generated
+db_path = r"C:\Users\lawashburn\Documents\DBpep_v2\finale\Reference_DB\target_decoy_scramble_20230505.fasta" #database fasta path
 base_file_path = r"C:/Users/lawashburn/Documents/DBpep_v2/XCorr_Opt/XCorr_validation/20230207/KD_Training_Spectra/MS2_formatted"
 
 precursor_error_cutoff = 20 #ppm
