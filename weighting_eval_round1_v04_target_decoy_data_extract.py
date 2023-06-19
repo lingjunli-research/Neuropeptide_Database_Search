@@ -11,10 +11,10 @@ import matplotlib.pyplot as plt
 import csv
 plt.style.use('seaborn-deep')
 
-weighted_metrics_results_path = r"C:\Users\lawashburn\Documents\DBpep_v2\validation\20230520_metricextraction\metrics_out_v9_20230516.csv"
+weighted_metrics_results_path = r"C:\Users\lawashburn\Documents\DBpep_v2\Validation_w_Kellen_Motif_Nhu_Raw_Files\PEAKS_oursoftware_compare_brain_only\DB_search_optimize\03_precursor_AMM_optimize_v2\2021_0817_Brain_1\metrics_extracted.csv"
 target_list_path = r"C:\Users\lawashburn\Documents\DBpep_v2\finale\Reference_DB\target_list.csv"
 round1_dsd_path = r"C:\Users\lawashburn\Documents\DBpep_v2\finale_weighting_hyperscore\weighting_dsd_eval\round1_DSD_0_10_w_hyperscore.csv"
-output_directory = r"C:\Users\lawashburn\Documents\DBpep_v2\validation\20230520_FDR"
+output_directory = r"C:\Users\lawashburn\Documents\DBpep_v2\Validation_w_Kellen_Motif_Nhu_Raw_Files\PEAKS_oursoftware_compare_brain_only\DB_search_optimize\03_precursor_AMM_optimize_v2\2021_0817_Brain_1"
 
 round1_fdr = 0.01
 power = 2
@@ -56,14 +56,14 @@ for sample_ID in sample_nodups:
     avg_frag_ions_norm_score = 1/(max(weighted_metrics_results_filtered['Average number of fragment ions per AA']))
     avg_non_neut_frag_ions_norm_score = 1/(max(weighted_metrics_results_filtered['Number of non-neutral-loss fragment ions per AA']))
     hyperscore_norm_score = 1/(max(weighted_metrics_results_filtered['Hyperscore']))
-    precent_sec_cov_norm_score = 1/(max(weighted_metrics_results_filtered['motif score']))
+    precent_sec_cov_norm_score = 1/(max(weighted_metrics_results_filtered['Motif_Score']))
     
     weighted_metrics_results_filtered['peptide_score'] = (
         (((weighted_metrics_results_filtered['Average Fragment Error']**power)*avg_frag_err_norm_score)*avg_frag_err)+
         (((weighted_metrics_results_filtered['Precursor Error']**power)*prec_err_norm_score)*prec_err)+
         (((weighted_metrics_results_filtered['# Consecutive b-ions']**power)*consec_b_ions_norm_score)*consec_b)+
         (((weighted_metrics_results_filtered['# Consecutive y-ions']**power)*consec_y_ions_norm_score)*consec_y)+
-        (((weighted_metrics_results_filtered['motif score']**power)*precent_sec_cov_norm_score)*percent_seq_cov)+
+        (((weighted_metrics_results_filtered['Motif_Score']**power)*precent_sec_cov_norm_score)*percent_seq_cov)+
         (((weighted_metrics_results_filtered['Average annotations/fragment ']**power)*avg_annotation_norm_score)*no_annot_peak)+
         (((weighted_metrics_results_filtered['Average number of fragment ions per AA']**power)*avg_frag_ions_norm_score)*avg_matched_ions_per_AA)+
         (((weighted_metrics_results_filtered['Number of non-neutral-loss fragment ions per AA']**power)*avg_non_neut_frag_ions_norm_score)*avg_matched_ions_per_AA_non_neut)+

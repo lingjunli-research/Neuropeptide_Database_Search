@@ -12,18 +12,18 @@ from matplotlib_venn import venn3, venn3_circles
 from collections import Counter
 plt.style.use('seaborn-deep')
 
-weighted_metrics_results_path = r"C:\Users\lawashburn\Documents\DBpep_v2\Validation_w_Kellen_Motif_Nhu_Raw_Files\weighting_metric_extraction_motif_full\metrics_out_motif_score_1_NFDEID.csv"
+weighted_metrics_results_path = r"C:\Users\lawashburn\Documents\DBpep_v2\Validation_w_Kellen_Motif_Nhu_Raw_Files\PEAKS_oursoftware_compare_brain_only\DB_search_optimize\03_precursor_AMM_optimize_v2\2021_0817_Brain_1\metrics_extracted.csv"
 target_list_path = r"C:\Users\lawashburn\Documents\DBpep_v2\finale\Reference_DB\target_list.csv"
 round1_dsd_path = r"C:\Users\lawashburn\Documents\DBpep_v2\Weighting_Assessment\Definitive Screening Design_v3_20230527_w_motif.csv"
-output_directory = r"C:\Users\lawashburn\Documents\DBpep_v2\Validation_w_Kellen_Motif_Nhu_Raw_Files\DSD_eval\motif_1_NFDEID"
-validation_directory = r"C:\Users\lawashburn\Documents\DBpep_v2\Validation_w_Kellen_Motif_Nhu_Raw_Files\NV_output_DB_search_results"
-sample_types = ['Brain','CoG','PO','SG','TG']
-#sample_types = ['Brain']
+output_directory = r"C:\Users\lawashburn\Documents\DBpep_v2\Validation_w_Kellen_Motif_Nhu_Raw_Files\PEAKS_oursoftware_compare_brain_only\DB_search_optimize\03_precursor_AMM_optimize_v2\2021_0817_Brain_1\DSD_eval"
+validation_directory = r"C:\Users\lawashburn\Documents\DBpep_v2\Validation_w_Kellen_Motif_Nhu_Raw_Files\PEAKS_oursoftware_compare_brain_only\DB_search_optimize\03_precursor_AMM_optimize_v2"
+# sample_types = ['Brain','CoG','PO','SG','TG']
+sample_types = ['Brain']
 round1_fdr = 0.01
 power = 2
 weighting_integer = 1
 num_rounds = 10
-reps = [1,2,3]
+reps = [1]
 
 weighted_metrics_results = pd.read_csv(weighted_metrics_results_path)
 round1_dsd = pd.read_csv(round1_dsd_path)
